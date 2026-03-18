@@ -2,122 +2,116 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
- * Manages a dedicated wpdb connection to the widgetfinder database.
+ * Read-only access to the bundled SQLite widget database.
  *
- * We create a separate wpdb instance instead of switching $wpdb->select()
- * to avoid polluting the global WordPress DB connection.
+ * The database lives at data/widgets.sqlite inside the plugin directory.
+ * It contains two tables:
+ *   widgets        — one row per widget (search data, icons, metadata)
+ *   plugin_widgets — plugin_slug → internal_widget_key mapping
  */
 class WFE_Database {
 
-	private static ?wpdb $db = null;
+	private static ?PDO $db = null;
 
 	/**
-	 * Returns (and lazily creates) the custom wpdb instance.
+	 * Returns (and lazily opens) the SQLite PDO connection.
+	 * Returns null if PDO SQLite is unavailable or the file is missing.
 	 */
-	public static function connection(): wpdb {
-		if ( null === self::$db ) {
-			self::$db = new wpdb( WFE_DB_USER, WFE_DB_PASSWORD, WFE_DB_NAME, WFE_DB_HOST );
-			self::$db->show_errors( false );
+	public static function connection(): ?PDO {
+		if ( null !== self::$db ) {
+			return self::$db;
 		}
+
+		if ( ! class_exists( 'PDO' ) || ! in_array( 'sqlite', PDO::getAvailableDrivers(), true ) ) {
+			return null;
+		}
+
+		$file = WFE_PATH . 'data/widgets.sqlite';
+		if ( ! file_exists( $file ) ) {
+			return null;
+		}
+
+		try {
+			self::$db = new PDO( 'sqlite:' . $file );
+			self::$db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			self::$db->setAttribute( PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ );
+		} catch ( \Throwable $e ) {
+			self::$db = null;
+		}
+
 		return self::$db;
 	}
 
 	/**
-	 * Run a search query against runtime_widgets_search.
+	 * Search widgets by keyword.
 	 *
-	 * Uses FULLTEXT BOOLEAN MODE for performance. Falls back to LIKE for
-	 * short queries (< 3 chars) which FULLTEXT ignores by default.
+	 * Matches against widget_title, widget_title_norm, widget_type,
+	 * plugin_name, and search_text.  Results are ordered by match quality
+	 * (title match > type/name match > body match), then by ranking_score
+	 * and active_installs.
 	 *
-	 * @param string $query  Raw search term from the user.
-	 * @param int    $limit  Max results to return.
-	 * @return array<object> Raw DB rows.
+	 * @param string $query  Raw search term.
+	 * @param int    $limit  Max rows to return.
+	 * @param int    $offset Pagination offset.
+	 * @return array<object>
 	 */
 	public static function search( string $query, int $limit = 20, int $offset = 0 ): array {
-		$db    = self::connection();
-		$query = trim( $query );
-
-		if ( strlen( $query ) < 3 ) {
-			return self::search_like( $db, $query, $limit, $offset );
+		$db = self::connection();
+		if ( ! $db ) {
+			return [];
 		}
 
-		return self::search_fulltext( $db, $query, $limit, $offset );
-	}
+		$query = trim( $query );
+		if ( $query === '' ) {
+			return [];
+		}
 
-	// ── Private helpers ──────────────────────────────────────────────────────
+		$like = '%' . self::esc_like( $query ) . '%';
 
-	private static function search_fulltext( wpdb $db, string $query, int $limit, int $offset ): array {
-		$ft_query = self::build_boolean_query( $query );
-
-		$sql = $db->prepare(
-			"SELECT
+		$sql = "
+			SELECT
 				widget_raw_id, plugin_slug, plugin_name,
 				widget_title, widget_type,
 				icon_type, icon_value,
 				description_short,
 				active_installs, rating_average,
-				MATCH(widget_title, widget_title_norm, search_text, plugin_name, widget_type)
-					AGAINST (%s IN BOOLEAN MODE) AS relevance
-			FROM runtime_widgets_search
-			WHERE MATCH(widget_title, widget_title_norm, search_text, plugin_name, widget_type)
-				AGAINST (%s IN BOOLEAN MODE)
+				CASE
+					WHEN widget_title_norm LIKE :like THEN 4
+					WHEN widget_title      LIKE :like THEN 3
+					WHEN widget_type       LIKE :like THEN 2
+					WHEN plugin_name       LIKE :like THEN 1
+					ELSE 0
+				END AS relevance
+			FROM widgets
+			WHERE widget_title_norm LIKE :like
+			   OR widget_title      LIKE :like
+			   OR widget_type       LIKE :like
+			   OR plugin_name       LIKE :like
+			   OR search_text       LIKE :like
 			ORDER BY
-				relevance        DESC,
-				ranking_score    DESC,
-				active_installs  DESC,
-				rating_average   DESC,
-				widget_raw_id    ASC
-			LIMIT %d OFFSET %d",
-			$ft_query,
-			$ft_query,
-			$limit,
-			$offset
-		);
+				relevance       DESC,
+				ranking_score   DESC,
+				active_installs DESC,
+				widget_raw_id   ASC
+			LIMIT :limit OFFSET :offset
+		";
 
-		$results = $db->get_results( $sql );
-		return $results ?: [];
-	}
-
-	private static function search_like( wpdb $db, string $query, int $limit, int $offset ): array {
-		$like = '%' . $db->esc_like( $query ) . '%';
-
-		$sql = $db->prepare(
-			"SELECT
-				widget_raw_id, plugin_slug, plugin_name,
-				widget_title, widget_type,
-				icon_type, icon_value,
-				description_short,
-				active_installs, rating_average,
-				0 AS relevance
-			FROM runtime_widgets_search
-			WHERE widget_title LIKE %s
-				OR widget_title_norm LIKE %s
-				OR widget_type LIKE %s
-			ORDER BY ranking_score DESC, active_installs DESC, widget_raw_id ASC
-			LIMIT %d OFFSET %d",
-			$like, $like, $like, $limit, $offset
-		);
-
-		$results = $db->get_results( $sql );
-		return $results ?: [];
+		try {
+			$stmt = $db->prepare( $sql );
+			$stmt->bindValue( ':like',   $like,   PDO::PARAM_STR );
+			$stmt->bindValue( ':limit',  $limit,  PDO::PARAM_INT );
+			$stmt->bindValue( ':offset', $offset, PDO::PARAM_INT );
+			$stmt->execute();
+			return $stmt->fetchAll();
+		} catch ( \Throwable $e ) {
+			return [];
+		}
 	}
 
 	/**
-	 * Builds a FULLTEXT BOOLEAN MODE query string.
-	 * Each word gets a '+' prefix (must contain) and '*' suffix (prefix match).
+	 * Escape a string for use in a SQLite LIKE pattern.
 	 */
-	private static function build_boolean_query( string $query ): string {
-		$words = preg_split( '/\s+/', trim( $query ), -1, PREG_SPLIT_NO_EMPTY );
-		$parts = [];
-
-		foreach ( $words as $word ) {
-			// Strip special FULLTEXT boolean chars to avoid syntax errors
-			$clean = preg_replace( '/[+\-><()\~*"@]/', '', $word );
-			if ( strlen( $clean ) >= 2 ) {
-				$parts[] = '+' . $clean . '*';
-			}
-		}
-
-		// Fall back to a plain query if all words were too short
-		return $parts ? implode( ' ', $parts ) : $query;
+	private static function esc_like( string $value ): string {
+		return str_replace( [ '\\', '%', '_' ], [ '\\\\', '\\%', '\\_' ], $value );
 	}
 }

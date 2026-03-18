@@ -3,7 +3,7 @@
  * Plugin Name:       Widget Finder for Elementor
  * Plugin URI:        https://dudaster.com
  * Description:       Extends Elementor's widget search to surface widgets from installed, inactive, and not-yet-installed plugins.
- * Version:           1.4.0
+ * Version:           1.5.0
  * Requires at least: 6.0
  * Requires PHP:      8.0
  * Author:            Liviu Dudas
@@ -18,18 +18,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WFE_VERSION', '1.4.0' );
+define( 'WFE_VERSION', '1.5.0' );
 define( 'WFE_FILE', __FILE__ );
 define( 'WFE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WFE_URL', plugin_dir_url( __FILE__ ) );
 define( 'WFE_SLUG', 'widget-finder' );
 
-// Widget Finder DB connection constants — can be overridden in wp-config.php
-if ( ! defined( 'WFE_DB_NAME' ) )     define( 'WFE_DB_NAME', 'widgetfinder' );
-if ( ! defined( 'WFE_DB_USER' ) )     define( 'WFE_DB_USER', 'root' );
-if ( ! defined( 'WFE_DB_PASSWORD' ) ) define( 'WFE_DB_PASSWORD', 'root' );
-// Use the same host as WordPress (same MariaDB server, different database)
-if ( ! defined( 'WFE_DB_HOST' ) )     define( 'WFE_DB_HOST', DB_HOST );
+// Widget database is bundled as data/widgets.sqlite — no credentials needed.
 
 // ── Activation ────────────────────────────────────────────────────────────────
 

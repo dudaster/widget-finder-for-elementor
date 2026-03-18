@@ -85,16 +85,17 @@ class WFE_Plugin_Tracker {
 		global $wpdb;
 
 		try {
-			$wfe_db = WFE_Database::connection();
-			// Use internal_widget_key from runtime_widgets — this is the actual
-			// Elementor widget registration slug (e.g. "plexx_text", "pistonui_accordion"),
-			// not the functional category stored in runtime_widgets_search.widget_type.
-			$types  = $wfe_db->get_col(
-				$wfe_db->prepare(
-					'SELECT DISTINCT internal_widget_key FROM runtime_widgets WHERE plugin_slug = %s AND internal_widget_key IS NOT NULL AND LENGTH(internal_widget_key) >= 3',
-					$slug
-				)
-			) ?: [];
+			$db = WFE_Database::connection();
+			if ( ! $db ) {
+				return;
+			}
+			// plugin_widgets maps plugin_slug → internal_widget_key (the actual
+			// Elementor registration slug, e.g. "plexx_text", "pistonui_accordion").
+			$stmt  = $db->prepare(
+				'SELECT internal_widget_key FROM plugin_widgets WHERE plugin_slug = ?'
+			);
+			$stmt->execute( [ $slug ] );
+			$types = $stmt->fetchAll( PDO::FETCH_COLUMN ) ?: [];
 		} catch ( \Throwable $e ) {
 			return;
 		}
