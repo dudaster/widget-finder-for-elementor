@@ -83,12 +83,15 @@ def build(sqlite_path: str, output_path: str) -> None:
     for row in map_rows:
         plugin_map[row["plugin_slug"]].append(row["internal_widget_key"])
 
-    # ── Group widgets by plugin ─────────────────────────────────────────────
+    # ── Group widgets by plugin (deduplicate by plugin_slug + widget_type) ──
     plugin_meta: dict[str, dict] = {}
     plugin_widgets: dict[str, list] = defaultdict(list)
+    seen: dict[str, set] = defaultdict(set)   # slug → {(widget_type, widget_title), ...}
 
     for row in widgets:
-        slug = row["plugin_slug"]
+        slug   = row["plugin_slug"]
+        wtype  = row["widget_type"] or ""
+        wtitle = row["widget_title"] or ""
 
         if slug not in plugin_meta:
             plugin_meta[slug] = {
@@ -97,6 +100,13 @@ def build(sqlite_path: str, output_path: str) -> None:
                 "rating":   round(float(row["rating_average"] or 0) * 10),
                 "score":    round(float(row["ranking_score"] or 0)),
             }
+
+        # Skip rows that are exact duplicates of (widget_type, widget_title) for
+        # this plugin — the source SQLite has ~100 such duplicate rows.
+        key = (wtype, wtitle)
+        if key in seen[slug]:
+            continue
+        seen[slug].add(key)
 
         itype  = row["icon_type"] or "unknown"
         ivalue = row["icon_value"] or ""
@@ -107,13 +117,14 @@ def build(sqlite_path: str, output_path: str) -> None:
 
         # Widget tuple: [type, title, icon, norm]
         plugin_widgets[slug].append([
-            row["widget_type"] or "",
-            row["widget_title"] or "",
+            wtype,
+            wtitle,
             icon,
             norm,
         ])
 
     # ── Assemble output ─────────────────────────────────────────────────────
+    # Start with widget-bearing plugins
     p_out: dict[str, list] = {}
     for slug, meta in plugin_meta.items():
         p_out[slug] = [
@@ -124,6 +135,11 @@ def build(sqlite_path: str, output_path: str) -> None:
             plugin_widgets[slug],
             plugin_map.get(slug, []),
         ]
+
+    # Add map-only plugins (have Elementor keys but no searchable widget rows)
+    for slug, keys in plugin_map.items():
+        if slug not in p_out:
+            p_out[slug] = ["", 0, 0, 0, [], keys]
 
     output = {"v": 1, "it": icon_types, "p": p_out}
 
