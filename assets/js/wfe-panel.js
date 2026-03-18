@@ -42,9 +42,13 @@
 			setTimeout(() => {
 				sessionStorage.removeItem('wfe_last_installed');
 
-				const searchInput = document.getElementById('elementor-panel-elements-search-input');
-				const loadingEl  = document.getElementById('elementor-panel-state-loading');
-				const panelStuck = !searchInput || (loadingEl && getComputedStyle(loadingEl).display !== 'none');
+				// Panel loaded successfully — user is editing, no conflict possible.
+				// (WFE.attached is set true when tryAttach() finds the search input.)
+				if (WFE.attached) return;
+
+				// Panel never loaded: confirm it is still stuck in the loading state.
+				const loadingEl = document.getElementById('elementor-panel-state-loading');
+				const panelStuck = loadingEl && getComputedStyle(loadingEl).display !== 'none';
 
 				if (!panelStuck) return;
 
