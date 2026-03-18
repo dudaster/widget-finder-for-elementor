@@ -132,14 +132,17 @@
 				sessionStorage.removeItem('wfe_restore_query');
 				searchInput.value = q;
 
-				// Wait until #elementor-panel-page-elements is in the DOM before
-				// triggering search — Elementor renders the search input and the
-				// panel body container in separate passes, so a fixed timeout is
-				// unreliable. Poll every 150ms (up to 4s) then fire immediately.
+				// Wait until #elementor-panel-page-elements is in the DOM, then
+				// dispatch a real input event. This triggers both Elementor's own
+				// search handler (so it filters its widget list, keeping it short)
+				// AND our delegated listener — identical to the user typing.
+				// Safe to dispatch at this point because Backbone's ui.input is
+				// only bound after the panel view is fully rendered, which is
+				// guaranteed by the existence of #elementor-panel-page-elements.
 				let attempts = 0;
 				const trySearch = () => {
 					if (document.getElementById('elementor-panel-page-elements')) {
-						WFE.onSearchInput({ target: searchInput });
+						searchInput.dispatchEvent(new Event('input', { bubbles: true }));
 					} else if (++attempts < 25) {
 						setTimeout(trySearch, 150);
 					}
