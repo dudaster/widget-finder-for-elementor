@@ -84,21 +84,15 @@ class WFE_Plugin_Tracker {
 	public static function record_widget_types( string $slug ): void {
 		global $wpdb;
 
-		try {
-			$db = WFE_Database::connection();
-			if ( ! $db ) {
-				return;
-			}
-			// plugin_widgets maps plugin_slug → internal_widget_key (the actual
-			// Elementor registration slug, e.g. "plexx_text", "pistonui_accordion").
-			$stmt  = $db->prepare(
-				'SELECT internal_widget_key FROM plugin_widgets WHERE plugin_slug = ?'
-			);
-			$stmt->execute( [ $slug ] );
-			$types = $stmt->fetchAll( PDO::FETCH_COLUMN ) ?: [];
-		} catch ( \Throwable $e ) {
-			return;
-		}
+		// Read canonical widget keys from the imported reference table.
+		// wfe_plugin_map is populated from data/widgets.json at activation time.
+		$ref_table = $wpdb->prefix . WFE_Importer::TABLE_MAP;
+		$types     = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT widget_key FROM {$ref_table} WHERE plugin_slug = %s",
+				$slug
+			)
+		) ?: [];
 
 		// Strip Elementor core types — they appear in every page and would
 		// produce false positives in the usage count.

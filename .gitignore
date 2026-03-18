@@ -1,0 +1,12 @@
+# Build artifacts — SQLite is the source database used by tools/build-widgets-json.py
+# to generate data/widgets.json.  Do not bundle the SQLite file in the plugin.
+data/widgets.sqlite
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
