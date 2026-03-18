@@ -57,8 +57,21 @@
 	/** Remove elements from the DOM and add them to the notification popup. */
 	function captureAll( els ) {
 		if ( ! els.length ) return;
-		const htmls = els.map( ( el ) => el.outerHTML );
-		els.forEach( ( el ) => el.remove() );
+
+		// Collect outerHTML only for notices that have actual text content.
+		// Plugins sometimes insert empty .notice placeholder elements and populate
+		// them later via JS — capturing those before they're filled results in
+		// empty popup items.  We still remove them from the page either way.
+		const htmls = [];
+		els.forEach( ( el ) => {
+			const html = el.outerHTML;
+			el.remove();
+			if ( el.textContent.trim().length > 0 ) {
+				htmls.push( html );
+			}
+		} );
+
+		if ( ! htmls.length ) return;
 		ensureUI();
 		htmls.forEach( addNotice );
 	}
