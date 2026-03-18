@@ -3,15 +3,14 @@
  */
 
 /* ── Pre-hide page-level notices to prevent flash before JS intercepts them ─ */
-/* Selectors mirror exactly what wfe-notices.js captures.                       */
-/* Once JS moves them into .wfe-notif-item, these rules no longer match.        */
+/* Covers notices at any nesting depth inside #wpbody-content.                  */
+/* The popup lives inside #screen-meta-links, NOT #wpbody-content, so notices   */
+/* inside the popup are never matched by these rules.                            */
+/* Once JS moves a notice into .wfe-notif-item the selector no longer matches.  */
 
-#wpbody-content > .notice,
-#wpbody-content > .updated,
-#wpbody-content > .error,
-#wpbody-content > .wrap > .notice,
-#wpbody-content > .wrap > .updated,
-#wpbody-content > .wrap > .error {
+#wpbody-content .notice,
+#wpbody-content .updated,
+#wpbody-content .error {
 	display: none !important;
 }
 
