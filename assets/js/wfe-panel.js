@@ -131,7 +131,20 @@
 			if (q) {
 				sessionStorage.removeItem('wfe_restore_query');
 				searchInput.value = q;
-				setTimeout(() => { WFE.onSearchInput({ target: searchInput }); }, 600);
+
+				// Wait until #elementor-panel-page-elements is in the DOM before
+				// triggering search — Elementor renders the search input and the
+				// panel body container in separate passes, so a fixed timeout is
+				// unreliable. Poll every 150ms (up to 4s) then fire immediately.
+				let attempts = 0;
+				const trySearch = () => {
+					if (document.getElementById('elementor-panel-page-elements')) {
+						WFE.onSearchInput({ target: searchInput });
+					} else if (++attempts < 25) {
+						setTimeout(trySearch, 150);
+					}
+				};
+				setTimeout(trySearch, 150);
 			}
 
 			// Show conflict notice if a plugin was deactivated because it blocked
@@ -182,8 +195,23 @@
 				const pageEl = document.getElementById('elementor-panel-page-elements');
 				if (pageEl) {
 					pageEl.appendChild(this.$section[0]);
+					this._watchSection(pageEl);
 				}
 			}
+		},
+
+		// Re-inject our section if Elementor replaces the panel body container.
+		_watchSection: function (pageEl) {
+			if (this._sectionObserver) return; // already watching
+			this._sectionObserver = new MutationObserver(() => {
+				if (!document.getElementById('wfe-results-section') && this.searchActive) {
+					const el = document.getElementById('elementor-panel-page-elements');
+					if (el) {
+						el.appendChild(this.$section[0]);
+					}
+				}
+			});
+			this._sectionObserver.observe(pageEl.parentNode || document.body, { childList: true, subtree: true });
 		},
 
 		// ── Search Input Handler ───────────────────────────────────────────
