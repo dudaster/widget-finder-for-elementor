@@ -54,7 +54,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 class WFE_Importer {
 
 	/** Bump this constant whenever data/widgets.json is updated. */
-	const DATA_VERSION = '1.0';
+	const DATA_VERSION = '1.1';
 
 	const TABLE_WIDGETS = 'wfe_widgets';
 	const TABLE_MAP     = 'wfe_plugin_map';
