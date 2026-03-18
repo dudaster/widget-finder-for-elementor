@@ -27,43 +27,31 @@
 		const wpbody = document.getElementById( 'wpbody-content' );
 		if ( ! wpbody ) return;
 
-		// ── Static notices present at DOMContentLoaded ──────────────────────
-		const staticEls = Array.from( wpbody.querySelectorAll(
-			':scope > ' + NOTICE_SEL.split( ', ' ).join( ', :scope > ' ) + ', ' +
-			':scope > .wrap > ' + NOTICE_SEL.split( ', ' ).join( ', :scope > .wrap > ' )
-		) );
+		// ── Static notices present at DOMContentLoaded ───────────────────────
+		// Query all matching elements anywhere inside wpbody, excluding anything
+		// already inside our own popup (which doesn't exist yet, but guard anyway).
+		const staticEls = Array.from( wpbody.querySelectorAll( NOTICE_SEL ) ).filter(
+			( el ) => ! el.closest( '#wfe-notif-popup' )
+		);
 		captureAll( staticEls );
 
-		// ── Watch for notices injected later via JavaScript ──────────────────
-		observeContainer( wpbody );
-		const wrap = wpbody.querySelector( ':scope > .wrap' );
-		if ( wrap ) observeContainer( wrap );
-
-		// If .wrap itself appears after DOMContentLoaded (rare), observe it too.
-		new MutationObserver( ( mutations ) => {
-			for ( const m of mutations ) {
-				for ( const node of m.addedNodes ) {
-					if ( node.nodeType === 1 && node.classList.contains( 'wrap' ) ) {
-						observeContainer( node );
-					}
-				}
-			}
-		} ).observe( wpbody, { childList: true } );
-	}
-
-	/** Watch a container and intercept any notice added as a direct child. */
-	function observeContainer( container ) {
+		// ── Watch for notices injected later via JavaScript ───────────────────
+		// subtree: true catches notices added at any depth, not just direct children.
 		new MutationObserver( ( mutations ) => {
 			const added = [];
 			for ( const m of mutations ) {
 				for ( const node of m.addedNodes ) {
-					if ( node.nodeType === 1 && node.matches( NOTICE_SEL ) ) {
+					if (
+						node.nodeType === 1 &&
+						node.matches( NOTICE_SEL ) &&
+						! node.closest( '#wfe-notif-popup' )
+					) {
 						added.push( node );
 					}
 				}
 			}
 			if ( added.length ) captureAll( added );
-		} ).observe( container, { childList: true } );
+		} ).observe( wpbody, { childList: true, subtree: true } );
 	}
 
 	/** Remove elements from the DOM and add them to the notification popup. */
