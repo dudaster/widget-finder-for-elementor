@@ -1,0 +1,370 @@
+/**
+ * Widget Finder for Elementor — Panel Styles
+ *
+ * Widget cards use the native .elementor-element class — Elementor's own
+ * CSS handles the card layout, hover, focus states. We only add:
+ *   1. The status dot overlay
+ *   2. The injected category section wrapper
+ *   3. The modal + toast
+ */
+
+/* ═══════════════════════════════════════════════════════
+   1. WFE CATEGORY WRAPPER
+   ═══════════════════════════════════════════════════════ */
+
+#wfe-panel-category {
+	/* Uses Elementor's own .elementor-panel-category styles automatically */
+}
+
+#wfe-results-section {
+	margin-top: 15px;
+}
+
+/* Category header title text — add WFE badge */
+#wfe-panel-category .elementor-panel-heading-title::after {
+	content: "WFE";
+	display: inline-block;
+	font-size: 9px;
+	font-weight: 700;
+	line-height: 1;
+	letter-spacing: 0.5px;
+	padding: 2px 4px;
+	border-radius: 2px;
+	background: #93003a;
+	color: #fff;
+	margin-left: 7px;
+	vertical-align: middle;
+	position: relative;
+	top: -1px;
+}
+
+/* Loading / empty states inside the items grid */
+.wfe-loading,
+.wfe-empty {
+	padding: 12px 16px;
+	font-size: 12px;
+	color: #959595;
+	text-align: center;
+	width: 100%;
+}
+
+/* ═══════════════════════════════════════════════════════
+   2. WFE WIDGET CARD — mirrors .elementor-element native style
+   ═══════════════════════════════════════════════════════ */
+
+/*
+ * Replicate the native Elementor widget card styles on .wfe-element.
+ * We cannot use .elementor-element because Elementor's JS auto-applies
+ * jQuery UI draggable to all elements with that class.
+ */
+button.wfe-element {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	min-height: 80px;
+	padding: 10px 5px;
+	background: transparent;
+	border: 1px solid #d5d8dc;
+	border-radius: 3px;
+	cursor: pointer;
+	text-align: center;
+	transition: border-color 0.2s ease, background 0.2s ease;
+	font-family: inherit;
+	color: inherit;
+	box-sizing: border-box;
+}
+
+button.wfe-element:hover {
+	background: #f3f3f3;
+	border-color: #b0b0b0;
+}
+
+button.wfe-element:focus {
+	outline: none;
+	border-color: #93003a;
+}
+
+button.wfe-element .icon {
+	font-size: 28px;
+	color: #7a7a7a;
+	margin-bottom: 8px;
+	line-height: 1;
+}
+
+button.wfe-element .title-wrapper .title {
+	font-size: 10px;
+	font-weight: 500;
+	color: #555d69;
+	line-height: 1.3;
+	word-break: break-word;
+}
+
+/* ═══════════════════════════════════════════════════════
+   4. WIDGET WRAP + STATUS DOT
+   ═══════════════════════════════════════════════════════ */
+
+/*
+ * The .wfe-widget-wrap is a thin positional wrapper around the native
+ * .elementor-element button. It adds the status dot without touching
+ * Elementor's own button styles.
+ */
+.wfe-widget-wrap {
+	position: relative;
+	display: flex; /* Let it participate in the grid the same as native */
+}
+
+/* The status dot — small circle in bottom-right corner of the card */
+.wfe-status-dot {
+	position: absolute;
+	bottom: 6px;
+	right: 6px;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	border: 1.5px solid rgba(255, 255, 255, 0.9);
+	pointer-events: none;
+	z-index: 1;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+/* Green — installed & active */
+.wfe-status-active .wfe-status-dot {
+	background-color: #2fc04d;
+}
+
+/* Red — installed but inactive */
+.wfe-status-inactive .wfe-status-dot {
+	background-color: #e43d3d;
+}
+
+/* Grey — not installed */
+.wfe-status-not_installed .wfe-status-dot {
+	background-color: #adadad;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SHOW MORE BUTTON
+   ═══════════════════════════════════════════════════════ */
+
+.wfe-show-more {
+	display: block;
+	width: calc(100% - 16px);
+	margin: 8px 8px 4px;
+	padding: 7px 0;
+	background: transparent;
+	border: 1px dashed #c0c0c0;
+	border-radius: 3px;
+	color: #7a7a7a;
+	font-size: 11px;
+	font-weight: 500;
+	cursor: pointer;
+	text-align: center;
+	transition: border-color 0.2s, color 0.2s;
+}
+
+.wfe-show-more:hover:not(:disabled) {
+	border-color: #93003a;
+	color: #93003a;
+}
+
+.wfe-show-more:disabled {
+	opacity: 0.6;
+	cursor: default;
+}
+
+/* ═══════════════════════════════════════════════════════
+   3. MODAL
+   ═══════════════════════════════════════════════════════ */
+
+.wfe-modal-overlay {
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.55);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 9999;
+}
+
+.wfe-modal {
+	background: #fff;
+	border-radius: 4px;
+	width: 260px;
+	max-width: 90%;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28);
+	overflow: hidden;
+	font-family: Roboto, sans-serif;
+}
+
+/* Modal Header */
+.wfe-modal-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 14px 16px 12px;
+	border-bottom: 1px solid #e8e8e8;
+	background: #f8f8f8;
+}
+
+.wfe-modal-header .eicon {
+	font-size: 16px;
+	color: #93003a;
+}
+
+.wfe-modal-title {
+	flex: 1;
+	font-size: 13px;
+	font-weight: 600;
+	color: #2d2d2d;
+}
+
+.wfe-modal-close {
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 2px;
+	color: #959595;
+	line-height: 1;
+	font-size: 14px;
+	display: flex;
+	align-items: center;
+}
+
+.wfe-modal-close:hover {
+	color: #333;
+}
+
+/* Modal Body */
+.wfe-modal-body {
+	padding: 16px;
+	font-size: 12px;
+	line-height: 1.6;
+	color: #555;
+}
+
+.wfe-modal-body p {
+	margin: 0;
+}
+
+.wfe-modal-body strong {
+	color: #2d2d2d;
+}
+
+.wfe-modal-progress {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: #555;
+	font-size: 12px;
+}
+
+.wfe-modal-progress .eicon {
+	font-size: 16px;
+	color: #93003a;
+}
+
+.wfe-modal-error {
+	color: #e43d3d;
+	margin: 0;
+}
+
+/* Modal Footer */
+.wfe-modal-footer {
+	display: flex;
+	gap: 8px;
+	padding: 10px 16px 14px;
+	justify-content: flex-end;
+	border-top: 1px solid #f0f0f0;
+}
+
+.wfe-modal-btn {
+	font-size: 11px;
+	font-weight: 600;
+	padding: 6px 14px;
+	border-radius: 3px;
+	border: 1px solid transparent;
+	cursor: pointer;
+	transition: background 0.15s, color 0.15s;
+	line-height: 1.4;
+}
+
+.wfe-modal-btn:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+
+.wfe-modal-cancel {
+	background: #f0f0f0;
+	color: #555;
+	border-color: #ddd;
+}
+
+.wfe-modal-cancel:hover:not(:disabled) {
+	background: #e4e4e4;
+}
+
+.wfe-modal-btn--activate {
+	background: #e43d3d;
+	color: #fff;
+	border-color: #c93232;
+}
+
+.wfe-modal-btn--activate:hover:not(:disabled) {
+	background: #c93232;
+}
+
+.wfe-modal-btn--install {
+	background: #93003a;
+	color: #fff;
+	border-color: #750030;
+}
+
+.wfe-modal-btn--install:hover:not(:disabled) {
+	background: #750030;
+}
+
+/* ═══════════════════════════════════════════════════════
+   4. TOAST NOTICE
+   ═══════════════════════════════════════════════════════ */
+
+#wfe-notice {
+	position: absolute;
+	bottom: 16px;
+	left: 50%;
+	transform: translateX(-50%) translateY(8px);
+	opacity: 0;
+	transition: opacity 0.25s ease, transform 0.25s ease;
+	background: #2d2d2d;
+	color: #fff;
+	font-size: 11px;
+	padding: 8px 14px;
+	border-radius: 4px;
+	white-space: normal;
+	max-width: 220px;
+	text-align: center;
+	z-index: 9998;
+	pointer-events: none;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+#wfe-notice.wfe-notice--visible {
+	opacity: 1;
+	transform: translateX(-50%) translateY(0);
+}
+
+/* ═══════════════════════════════════════════════════════
+   5. ELEMENTOR ICON SPIN ANIMATION (for loading states)
+   ═══════════════════════════════════════════════════════ */
+
+@keyframes wfe-spin {
+	from { transform: rotate(0deg); }
+	to   { transform: rotate(360deg); }
+}
+
+.eicon-animation-spin {
+	display: inline-block;
+	animation: wfe-spin 1s linear infinite;
+}
