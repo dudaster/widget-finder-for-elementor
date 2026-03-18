@@ -139,8 +139,6 @@ class WFE_Admin {
 
 		$data = [
 			'widgets_per_page'        => absint( $_POST['widgets_per_page'] ?? 20 ),
-			'pagination_type'         => sanitize_key( $_POST['pagination_type'] ?? 'show_more' ),
-			'default_sort'            => sanitize_key( $_POST['default_sort'] ?? 'relevance' ),
 			'show_plugin_info_button' => isset( $_POST['show_plugin_info_button'] ),
 			'max_active_unused'       => max( 0, (int) ( $_POST['max_active_unused'] ?? 5 ) ),
 			'max_inactive_unused'     => max( 0, (int) ( $_POST['max_inactive_unused'] ?? 5 ) ),
@@ -289,37 +287,6 @@ class WFE_Admin {
 									value="<?php echo esc_attr( $s['widgets_per_page'] ); ?>"
 									min="5" max="50" step="5" class="small-text" />
 								<p class="description"><?php esc_html_e( 'How many results to show in the Elementor panel before paginating (5–50).', 'widget-finder' ); ?></p>
-							</td>
-						</tr>
-
-						<tr>
-							<th scope="row"><?php esc_html_e( 'Pagination style', 'widget-finder' ); ?></th>
-							<td>
-								<fieldset>
-									<label>
-										<input type="radio" name="pagination_type" value="show_more"
-											<?php checked( $s['pagination_type'], 'show_more' ); ?> />
-										<?php esc_html_e( '"Show more" button', 'widget-finder' ); ?>
-									</label><br>
-									<label>
-										<input type="radio" name="pagination_type" value="paginate"
-											<?php checked( $s['pagination_type'], 'paginate' ); ?> />
-										<?php esc_html_e( 'Numbered pages', 'widget-finder' ); ?>
-									</label>
-								</fieldset>
-							</td>
-						</tr>
-
-						<tr>
-							<th scope="row">
-								<label for="default_sort"><?php esc_html_e( 'Default sort order', 'widget-finder' ); ?></label>
-							</th>
-							<td>
-								<select id="default_sort" name="default_sort">
-									<option value="relevance" <?php selected( $s['default_sort'], 'relevance' ); ?>><?php esc_html_e( 'Relevance', 'widget-finder' ); ?></option>
-									<option value="installs"  <?php selected( $s['default_sort'], 'installs' ); ?>><?php esc_html_e( 'Active Installs', 'widget-finder' ); ?></option>
-									<option value="rating"    <?php selected( $s['default_sort'], 'rating' ); ?>><?php esc_html_e( 'Rating', 'widget-finder' ); ?></option>
-								</select>
 							</td>
 						</tr>
 

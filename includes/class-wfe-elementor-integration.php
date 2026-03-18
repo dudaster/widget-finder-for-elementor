@@ -36,8 +36,6 @@ class WFE_Elementor_Integration {
 			'nonce'        => wp_create_nonce( 'wp_rest' ),
 			'settings'    => [
 				'widgetsPerPage'       => (int) $settings['widgets_per_page'],
-				'paginationType'       => $settings['pagination_type'],
-				'defaultSort'          => $settings['default_sort'],
 				'showPluginInfoButton' => (bool) $settings['show_plugin_info_button'],
 			],
 			'i18n'        => [

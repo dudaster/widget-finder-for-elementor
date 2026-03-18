@@ -10,8 +10,6 @@ class WFE_Settings {
 
 	const DEFAULTS = [
 		'widgets_per_page'         => 20,
-		'pagination_type'          => 'show_more', // 'show_more' | 'paginate'
-		'default_sort'             => 'relevance', // 'relevance' | 'installs' | 'rating'
 		'show_plugin_info_button'  => true,
 		// Max number of WFE-installed plugins (with 0 widget usage) allowed to be
 		// ACTIVE at once.  Oldest are deactivated when a new plugin is activated.
