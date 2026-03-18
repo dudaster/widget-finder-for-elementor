@@ -208,7 +208,8 @@
 		dismissBtn.title      = i18n.close;
 		item.appendChild( dismissBtn );
 
-		dismissBtn.addEventListener( 'click', () => {
+		dismissBtn.addEventListener( 'click', ( e ) => {
+			e.stopPropagation();
 			item.remove();
 			const remaining = listEl.querySelectorAll( '.wfe-notif-item' ).length;
 			updateTitle( i18n.title, remaining );
