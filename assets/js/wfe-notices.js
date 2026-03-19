@@ -152,6 +152,41 @@
 			document.body.appendChild( wrapEl );
 		}
 
+		// ── Guard against external plugins moving notice elements out of items ──
+		// Some plugins (e.g. FreemiusSDK) scan the DOM after DOMContentLoaded and
+		// move their own notice elements back to #wpbody-content.  When they do,
+		// the popup item is left with only the dismiss button and no visible content.
+		// This observer detects that and removes the now-empty item so the popup
+		// stays clean.  The main MutationObserver on #wpbody-content then re-captures
+		// the returned element and creates a fresh, populated item.
+		new MutationObserver( () => {
+			let changed = false;
+			Array.from( listEl.querySelectorAll( '.wfe-notif-item' ) ).forEach( ( item ) => {
+				// An item is "empty" when its only remaining child is the dismiss button.
+				if ( ! item.querySelector( ':scope > :not(.wfe-notif-dismiss)' ) ) {
+					item.remove();
+					changed = true;
+				}
+			} );
+
+			if ( ! changed ) return;
+
+			const remaining = listEl.querySelectorAll( '.wfe-notif-item' ).length;
+			updateTitle( i18n.title, remaining );
+			badgeEl.textContent = remaining;
+
+			const ackStr  = ( function () { try { return localStorage.getItem( ACK_KEY ); } catch ( _ ) { return null; } } )();
+			const ackCount = ackStr !== null ? parseInt( ackStr, 10 ) : -1;
+			badgeEl.hidden = ( remaining <= ackCount );
+
+			if ( remaining === 0 ) {
+				try { localStorage.removeItem( ACK_KEY ); } catch ( _ ) {}
+				popupEl.hidden = true;
+				wrapEl.remove();
+				uiReady = false;
+			}
+		} ).observe( listEl, { childList: true, subtree: true } );
+
 		// ── Events ─────────────────────────────────────────────────────────
 		btnEl.addEventListener( 'click', ( e ) => {
 			e.stopPropagation();

@@ -97,11 +97,17 @@ class WFE_Admin {
 
 	/**
 	 * Enqueue the notification manager on every admin page.
-	 * Skips the Elementor editor (which has its own panel UI).
+	 * Skips editor screens (Elementor, Gutenberg/classic post editor).
 	 */
-	public static function enqueue_notice_manager(): void {
+	public static function enqueue_notice_manager( string $hook ): void {
+		// Skip Elementor editor.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_GET['action'] ) && in_array( $_GET['action'], [ 'elementor', 'elementor-preview' ], true ) ) {
+			return;
+		}
+
+		// Skip WordPress post/page editor screens (Gutenberg and classic).
+		if ( in_array( $hook, [ 'post.php', 'post-new.php' ], true ) ) {
 			return;
 		}
 

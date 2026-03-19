@@ -3,7 +3,7 @@
  * Plugin Name:       Widget Finder for Elementor
  * Plugin URI:        https://dudaster.com
  * Description:       Extends Elementor's widget search to surface widgets from installed, inactive, and not-yet-installed plugins.
- * Version:           1.6.0
+ * Version:           1.6.4
  * Requires at least: 6.0
  * Requires PHP:      8.0
  * Author:            Liviu Dudas
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WFE_VERSION', '1.6.0' );
+define( 'WFE_VERSION', '1.6.4' );
 define( 'WFE_FILE', __FILE__ );
 define( 'WFE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WFE_URL', plugin_dir_url( __FILE__ ) );
