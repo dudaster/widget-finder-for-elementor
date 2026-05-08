@@ -8,10 +8,10 @@
 (function ($) {
 	'use strict';
 
-	const WFE = {
+	const WFX = {
 		DEBOUNCE_MS: 350,
 		MIN_CHARS: 2,
-		MAX_RESULTS: (wfeData.settings && wfeData.settings.widgetsPerPage) || 20,
+		MAX_RESULTS: (wfxData.settings && wfxData.settings.widgetsPerPage) || 20,
 
 		searchTimer: null,
 		$section: null,
@@ -25,12 +25,12 @@
 		// ── Plugin Health Check ────────────────────────────────────────────
 
 		maybeStartHealthCheck: function () {
-			const raw = sessionStorage.getItem('wfe_last_installed');
+			const raw = sessionStorage.getItem('wfx_last_installed');
 			if (!raw) return;
 
 			let info;
 			try { info = JSON.parse(raw); } catch (e) {
-				sessionStorage.removeItem('wfe_last_installed');
+				sessionStorage.removeItem('wfx_last_installed');
 				return;
 			}
 
@@ -40,11 +40,11 @@
 			// a plugin's Elementor hook fails silently and leaves the panel spinning.
 			// 15s gives slow servers enough time to finish widget-config loading.
 			setTimeout(() => {
-				sessionStorage.removeItem('wfe_last_installed');
+				sessionStorage.removeItem('wfx_last_installed');
 
 				// Panel loaded successfully — user is editing, no conflict possible.
-				// (WFE.attached is set true when tryAttach() finds the search input.)
-				if (WFE.attached) return;
+				// (WFX.attached is set true when tryAttach() finds the search input.)
+				if (WFX.attached) return;
 
 				// Panel never loaded: confirm it is still stuck in the loading state.
 				const loadingEl = document.getElementById('elementor-panel-state-loading');
@@ -53,12 +53,12 @@
 				if (!panelStuck) return;
 
 				$.ajax({
-					url: wfeData.deactivateUrl,
+					url: wfxData.deactivateUrl,
 					method: 'POST',
-					headers: { 'X-WP-Nonce': wfeData.nonce, 'Content-Type': 'application/json' },
+					headers: { 'X-WP-Nonce': wfxData.nonce, 'Content-Type': 'application/json' },
 					data: JSON.stringify({ plugin_file: info.file }),
 					complete: () => {
-						sessionStorage.setItem('wfe_conflict_notice', info.name);
+						sessionStorage.setItem('wfx_conflict_notice', info.name);
 						location.reload();
 					},
 				});
@@ -68,10 +68,10 @@
 		showConflictNotice: function (pluginName) {
 			this.openModal({
 				icon: 'eicon-warning',
-				title: wfeData.i18n.conflict_title,
-				body: wfeData.i18n.conflict_body.replace('%s', '<strong>' + pluginName + '</strong>'),
-				btnText: wfeData.i18n.conflict_search_another,
-				btnClass: 'wfe-modal-btn--activate',
+				title: wfxData.i18n.conflict_title,
+				body: wfxData.i18n.conflict_body.replace('%s', '<strong>' + pluginName + '</strong>'),
+				btnText: wfxData.i18n.conflict_search_another,
+				btnClass: 'wfx-modal-btn--activate',
 				onConfirm: ($modal) => {
 					this.closeModal($modal);
 					const si = document.getElementById('elementor-panel-elements-search-input');
@@ -90,7 +90,7 @@
 		// detector handles that case separately via maybeStartHealthCheck).
 
 		maybePanelReadyGuardian: function () {
-			if (sessionStorage.getItem('wfe_last_installed')) return;
+			if (sessionStorage.getItem('wfx_last_installed')) return;
 
 			setTimeout(() => {
 				if (!document.body.classList.contains('elementor-panel-loading')) return;
@@ -131,9 +131,9 @@
 			// Call our handler directly — never dispatch a DOM event, which would
 			// also trigger Elementor's Backbone handler before its ui.input is bound,
 			// causing "this.ui.input.val is not a function" errors that kill the panel.
-			const q = sessionStorage.getItem('wfe_restore_query');
+			const q = sessionStorage.getItem('wfx_restore_query');
 			if (q) {
-				sessionStorage.removeItem('wfe_restore_query');
+				sessionStorage.removeItem('wfx_restore_query');
 				searchInput.value = q;
 
 				// Wait until #elementor-panel-page-elements is in the DOM, then
@@ -156,10 +156,10 @@
 
 			// Show conflict notice if a plugin was deactivated because it blocked
 			// the Elementor panel from loading (stuck in #elementor-panel-state-loading).
-			const conflictName = sessionStorage.getItem('wfe_conflict_notice');
+			const conflictName = sessionStorage.getItem('wfx_conflict_notice');
 			if (conflictName) {
-				sessionStorage.removeItem('wfe_conflict_notice');
-				setTimeout(() => { WFE.showConflictNotice(conflictName); }, 1000);
+				sessionStorage.removeItem('wfx_conflict_notice');
+				setTimeout(() => { WFX.showConflictNotice(conflictName); }, 1000);
 			}
 		},
 
@@ -168,9 +168,9 @@
 		ensureSection: function () {
 			// Build section once (but don't inject yet — pageEl may not exist).
 			if (!this.$section) {
-				const $section = $('<div>', { id: 'wfe-results-section' }).hide();
+				const $section = $('<div>', { id: 'wfx-results-section' }).hide();
 
-				const $header = $('<div>', { class: 'wfe-section-header' }).append(
+				const $header = $('<div>', { class: 'wfx-section-header' }).append(
 					$('<button>', {
 						class: 'elementor-panel-heading elementor-panel-category-title',
 						type: 'button',
@@ -180,15 +180,15 @@
 						),
 						$('<span>', {
 							class: 'elementor-panel-heading-title',
-							text: wfeData.i18n.title,
+							text: wfxData.i18n.title,
 						})
 					).on('click', function () {
-						$section.toggleClass('wfe-collapsed');
+						$section.toggleClass('wfx-collapsed');
 					})
 				);
 
 				this.$itemsGrid = $('<div>', {
-					class: 'elementor-panel-category-items elementor-responsive-panel wfe-items-grid',
+					class: 'elementor-panel-category-items elementor-responsive-panel wfx-items-grid',
 				});
 
 				$section.append($header).append(this.$itemsGrid);
@@ -198,10 +198,20 @@
 			// Inject into #elementor-panel-page-elements whenever the container
 			// becomes available. Retried on every call so post-install restores
 			// succeed even if the container wasn't ready at the first attempt.
-			if (!document.getElementById('wfe-results-section')) {
+			if (!document.getElementById('wfx-results-section')) {
 				const pageEl = document.getElementById('elementor-panel-page-elements');
 				if (pageEl) {
-					pageEl.appendChild(this.$section[0]);
+					const angieArea = document.getElementById('elementor-panel-elements-widget-creation-area');
+					if (angieArea) {
+						angieArea.parentNode.insertBefore(this.$section[0], angieArea);
+					} else {
+						const wrapperEl = document.getElementById('elementor-panel-elements-wrapper');
+						if (wrapperEl && wrapperEl.nextSibling) {
+							wrapperEl.parentNode.insertBefore(this.$section[0], wrapperEl.nextSibling);
+						} else {
+							pageEl.appendChild(this.$section[0]);
+						}
+					}
 					this._watchSection(pageEl);
 				}
 			}
@@ -211,7 +221,7 @@
 		_watchSection: function (pageEl) {
 			if (this._sectionObserver) return; // already watching
 			this._sectionObserver = new MutationObserver(() => {
-				if (!document.getElementById('wfe-results-section') && this.searchActive) {
+				if (!document.getElementById('wfx-results-section') && this.searchActive) {
 					const el = document.getElementById('elementor-panel-page-elements');
 					if (el) {
 						el.appendChild(this.$section[0]);
@@ -248,10 +258,10 @@
 
 		search: function (query, offset) {
 			$.ajax({
-				url: wfeData.restUrl,
+				url: wfxData.restUrl,
 				method: 'GET',
 				data: { q: query, limit: this.MAX_RESULTS, offset: offset },
-				headers: { 'X-WP-Nonce': wfeData.nonce },
+				headers: { 'X-WP-Nonce': wfxData.nonce },
 				success: (data) => this.renderResults(data, offset > 0),
 				error: () => { if (offset === 0) this.hideSection(); },
 			});
@@ -262,7 +272,7 @@
 		showLoading: function () {
 			if (!this.$section) return;
 			this.$itemsGrid.html(
-				'<div class="wfe-state-msg">' + wfeData.i18n.searching + '</div>'
+				'<div class="wfx-state-msg">' + wfxData.i18n.searching + '</div>'
 			);
 			this.$section.show();
 		},
@@ -285,7 +295,7 @@
 
 			if (!append && items.length === 0) {
 				this.$itemsGrid.html(
-					'<div class="wfe-state-msg">' + wfeData.i18n.no_results + '</div>'
+					'<div class="wfx-state-msg">' + wfxData.i18n.no_results + '</div>'
 				);
 				this.$section.show();
 				return;
@@ -298,11 +308,11 @@
 			if (hasMore) {
 				this.currentOffset += this.MAX_RESULTS;
 				const $more = $('<button>', {
-					class: 'wfe-show-more',
+					class: 'wfx-show-more',
 					type: 'button',
-					text: wfeData.i18n.show_more,
+					text: wfxData.i18n.show_more,
 				}).on('click', () => {
-					$more.text(wfeData.i18n.searching).prop('disabled', true);
+					$more.text(wfxData.i18n.searching).prop('disabled', true);
 					this.search(this.currentQuery, this.currentOffset);
 				});
 				this.$itemsGrid.append($more);
@@ -313,14 +323,14 @@
 
 		buildWidgetCard: function (widget) {
 			const $wrap = $('<div>', {
-				class: 'wfe-widget-wrap wfe-status-' + widget.status,
+				class: 'wfx-widget-wrap wfe-status-' + widget.status,
 				title: this.buildTooltip(widget),
 				'data-slug': widget.plugin_slug,
 				'data-file': widget.plugin_file || '',
 			});
 
 			const $btn = $('<button>', {
-				class: 'wfe-element',
+				class: 'wfx-element',
 				type: 'button',
 			});
 
@@ -333,7 +343,7 @@
 			).appendTo($btn);
 
 			$('<span>', {
-				class: 'wfe-status-dot',
+				class: 'wfx-status-dot',
 				'aria-label': this.statusLabel(widget.status),
 			}).appendTo($wrap);
 
@@ -347,7 +357,7 @@
 
 		onWidgetClick: function (widget, $wrap) {
 			if (widget.status === 'active') {
-				this.showNotice('"' + widget.widget_title + '" ' + wfeData.i18n.available_notice);
+				this.showNotice('"' + widget.widget_title + '" ' + wfxData.i18n.available_notice);
 			} else if (widget.status === 'inactive') {
 				this.showActivateModal(widget, $wrap);
 			} else {
@@ -360,10 +370,10 @@
 		showActivateModal: function (widget, $wrap) {
 			this.openModal({
 				icon: 'eicon-play',
-				title: wfeData.i18n.modal_activate_title,
-				body: wfeData.i18n.modal_activate_body.replace('%s', '<strong>' + widget.plugin_name + '</strong>'),
-				btnText: wfeData.i18n.btn_activate,
-				btnClass: 'wfe-modal-btn--activate',
+				title: wfxData.i18n.modal_activate_title,
+				body: wfxData.i18n.modal_activate_body.replace('%s', '<strong>' + widget.plugin_name + '</strong>'),
+				btnText: wfxData.i18n.btn_activate,
+				btnClass: 'wfx-modal-btn--activate',
 				onConfirm: ($modal) => this.doActivate(widget, $wrap, $modal),
 			});
 		},
@@ -371,100 +381,100 @@
 		showInstallModal: function (widget, $wrap) {
 			this.openModal({
 				icon: 'eicon-download',
-				title: wfeData.i18n.modal_install_title,
-				body: wfeData.i18n.modal_install_body.replace('%s', '<strong>' + widget.plugin_name + '</strong>'),
-				btnText: wfeData.i18n.btn_install,
-				btnClass: 'wfe-modal-btn--install',
+				title: wfxData.i18n.modal_install_title,
+				body: wfxData.i18n.modal_install_body.replace('%s', '<strong>' + widget.plugin_name + '</strong>'),
+				btnText: wfxData.i18n.btn_install,
+				btnClass: 'wfx-modal-btn--install',
 				onConfirm: ($modal) => this.doInstall(widget, $wrap, $modal),
 			});
 		},
 
 		doActivate: function (widget, $wrap, $modal) {
 			const $btn = $modal.find('.wfe-modal-confirm');
-			$btn.text(wfeData.i18n.btn_activating).prop('disabled', true);
+			$btn.text(wfxData.i18n.btn_activating).prop('disabled', true);
 
 			$.ajax({
-				url: wfeData.activateUrl,
+				url: wfxData.activateUrl,
 				method: 'POST',
-				headers: { 'X-WP-Nonce': wfeData.nonce, 'Content-Type': 'application/json' },
+				headers: { 'X-WP-Nonce': wfxData.nonce, 'Content-Type': 'application/json' },
 				data: JSON.stringify({ plugin_file: widget.plugin_file }),
 				success: (res) => {
 					if (res.success) {
 						widget.status = 'active';
-						$wrap.removeClass('wfe-status-inactive').addClass('wfe-status-active');
+						$wrap.removeClass('wfx-status-inactive').addClass('wfx-status-active');
 						this.closeModal($modal);
-						this.showNotice(wfeData.i18n.activate_success.replace('%s', widget.plugin_name));
+						this.showNotice(wfxData.i18n.activate_success.replace('%s', widget.plugin_name));
 
 						// Probe the REST search endpoint to detect PHP fatal errors
 						// (e.g. class redeclaration) introduced by the newly activated plugin.
 						// All WP plugins are bootstrapped for REST requests, so a 500 here
 						// means the plugin is incompatible — deactivate immediately, no reload.
 						$.ajax({
-							url: wfeData.restUrl + '?q=a&limit=1',
+							url: wfxData.restUrl + '?q=a&limit=1',
 							method: 'GET',
-							headers: { 'X-WP-Nonce': wfeData.nonce },
+							headers: { 'X-WP-Nonce': wfxData.nonce },
 							statusCode: {
 								500: () => {
 									$.ajax({
-										url: wfeData.deactivateUrl,
+										url: wfxData.deactivateUrl,
 										method: 'POST',
-										headers: { 'X-WP-Nonce': wfeData.nonce, 'Content-Type': 'application/json' },
+										headers: { 'X-WP-Nonce': wfxData.nonce, 'Content-Type': 'application/json' },
 										data: JSON.stringify({ plugin_file: widget.plugin_file }),
-										complete: () => { WFE.showConflictNotice(widget.plugin_name); },
+										complete: () => { WFX.showConflictNotice(widget.plugin_name); },
 									});
 								},
 							},
 							success: () => {
 								const q = document.getElementById('elementor-panel-elements-search-input')?.value?.trim();
-								if (q) sessionStorage.setItem('wfe_restore_query', q);
-								sessionStorage.setItem('wfe_last_installed', JSON.stringify({
+								if (q) sessionStorage.setItem('wfx_restore_query', q);
+								sessionStorage.setItem('wfx_last_installed', JSON.stringify({
 									slug: widget.plugin_slug,
 									file: widget.plugin_file,
 									name: widget.plugin_name,
 								}));
-								WFE.saveAndReload();
+								WFX.saveAndReload();
 							},
 						});
 					} else {
-						$btn.text(wfeData.i18n.err_activate).prop('disabled', false);
+						$btn.text(wfxData.i18n.err_activate).prop('disabled', false);
 					}
 				},
-				error: () => { $btn.text(wfeData.i18n.err_activate).prop('disabled', false); },
+				error: () => { $btn.text(wfxData.i18n.err_activate).prop('disabled', false); },
 			});
 		},
 
 		doInstall: function (widget, $wrap, $modal) {
 			const $btn = $modal.find('.wfe-modal-confirm');
-			$btn.text(wfeData.i18n.btn_installing).prop('disabled', true);
+			$btn.text(wfxData.i18n.btn_installing).prop('disabled', true);
 			$modal.find('.wfe-modal-body').html(
-				'<div class="wfe-modal-progress"><i class="eicon eicon-loading eicon-animation-spin"></i> ' +
-				wfeData.i18n.installing_progress.replace('%s', '<strong>' + widget.plugin_name + '</strong>') +
+				'<div class="wfx-modal-progress"><i class="eicon eicon-loading eicon-animation-spin"></i> ' +
+				wfxData.i18n.installing_progress.replace('%s', '<strong>' + widget.plugin_name + '</strong>') +
 				'</div>'
 			);
 
 			$.ajax({
-				url: wfeData.installUrl,
+				url: wfxData.installUrl,
 				method: 'POST',
-				headers: { 'X-WP-Nonce': wfeData.nonce, 'Content-Type': 'application/json' },
+				headers: { 'X-WP-Nonce': wfxData.nonce, 'Content-Type': 'application/json' },
 				data: JSON.stringify({ slug: widget.plugin_slug, plugin_name: widget.plugin_name }),
 				success: (res) => {
 					if (res.success) {
 						widget.plugin_file = res.plugin_file;
 						widget.status = 'inactive';
-						$wrap.removeClass('wfe-status-not_installed').addClass('wfe-status-inactive');
+						$wrap.removeClass('wfx-status-not_installed').addClass('wfx-status-inactive');
 						$modal.find('.wfe-modal-body').html(
-							'<div class="wfe-modal-progress"><i class="eicon eicon-loading eicon-animation-spin"></i> ' +
-							wfeData.i18n.activating_progress + '</div>'
+							'<div class="wfx-modal-progress"><i class="eicon eicon-loading eicon-animation-spin"></i> ' +
+							wfxData.i18n.activating_progress + '</div>'
 						);
 						this.doActivate(widget, $wrap, $modal);
 					} else {
-						$modal.find('.wfe-modal-body').html('<p class="wfe-modal-error">' + wfeData.i18n.err_install + '</p>');
-						$btn.text(wfeData.i18n.btn_install).prop('disabled', false);
+						$modal.find('.wfe-modal-body').html('<p class="wfx-modal-error">' + wfxData.i18n.err_install + '</p>');
+						$btn.text(wfxData.i18n.btn_install).prop('disabled', false);
 					}
 				},
 				error: () => {
-					$modal.find('.wfe-modal-body').html('<p class="wfe-modal-error">' + wfeData.i18n.err_install + '</p>');
-					$btn.text(wfeData.i18n.btn_install).prop('disabled', false);
+					$modal.find('.wfe-modal-body').html('<p class="wfx-modal-error">' + wfxData.i18n.err_install + '</p>');
+					$btn.text(wfxData.i18n.btn_install).prop('disabled', false);
 				},
 			});
 		},
@@ -502,22 +512,22 @@
 		openModal: function (opts) {
 			$('#wfe-modal-overlay').remove();
 
-			const $overlay = $('<div>', { id: 'wfe-modal-overlay', class: 'wfe-modal-overlay' });
-			const $modal   = $('<div>', { class: 'wfe-modal' });
+			const $overlay = $('<div>', { id: 'wfx-modal-overlay', class: 'wfx-modal-overlay' });
+			const $modal   = $('<div>', { class: 'wfx-modal' });
 
-			$('<div>', { class: 'wfe-modal-header' }).append(
+			$('<div>', { class: 'wfx-modal-header' }).append(
 				$('<i>', { class: 'eicon ' + opts.icon }),
-				$('<span>', { class: 'wfe-modal-title', text: opts.title }),
-				$('<button>', { class: 'wfe-modal-close', type: 'button', html: '<i class="eicon eicon-close"></i>' })
+				$('<span>', { class: 'wfx-modal-title', text: opts.title }),
+				$('<button>', { class: 'wfx-modal-close', type: 'button', html: '<i class="eicon eicon-close"></i>' })
 					.on('click', () => this.closeModal($overlay))
 			).appendTo($modal);
 
-			$('<div>', { class: 'wfe-modal-body', html: '<p>' + opts.body + '</p>' }).appendTo($modal);
+			$('<div>', { class: 'wfx-modal-body', html: '<p>' + opts.body + '</p>' }).appendTo($modal);
 
-			$('<div>', { class: 'wfe-modal-footer' }).append(
-				$('<button>', { class: 'wfe-modal-btn wfe-modal-cancel', type: 'button', text: wfeData.i18n.btn_cancel })
+			$('<div>', { class: 'wfx-modal-footer' }).append(
+				$('<button>', { class: 'wfx-modal-btn wfe-modal-cancel', type: 'button', text: wfxData.i18n.btn_cancel })
 					.on('click', () => this.closeModal($overlay)),
-				$('<button>', { class: 'wfe-modal-btn wfe-modal-confirm ' + opts.btnClass, type: 'button', text: opts.btnText })
+				$('<button>', { class: 'wfx-modal-btn wfe-modal-confirm ' + opts.btnClass, type: 'button', text: opts.btnText })
 					.on('click', () => opts.onConfirm($overlay))
 			).appendTo($modal);
 
@@ -534,11 +544,11 @@
 		// ── Toast Notice ───────────────────────────────────────────────────
 
 		showNotice: function (message) {
-			$('#wfe-notice').remove();
-			const $n = $('<div>', { id: 'wfe-notice', class: 'wfe-notice', text: message });
+			$('#wfx-notice').remove();
+			const $n = $('<div>', { id: 'wfx-notice', class: 'wfx-notice', text: message });
 			$(document.getElementById('elementor-panel') || document.body).append($n);
-			setTimeout(() => $n.addClass('wfe-notice--visible'), 40);
-			setTimeout(() => { $n.removeClass('wfe-notice--visible'); setTimeout(() => $n.remove(), 300); }, 3500);
+			setTimeout(() => $n.addClass('wfx-notice--visible'), 40);
+			setTimeout(() => { $n.removeClass('wfx-notice--visible'); setTimeout(() => $n.remove(), 300); }, 3500);
 		},
 
 		// ── Helpers ────────────────────────────────────────────────────────
@@ -568,7 +578,7 @@
 		},
 
 		statusLabel: function (s) {
-			return { active: wfeData.i18n.status_active, inactive: wfeData.i18n.status_inactive, not_installed: wfeData.i18n.status_missing }[s] || s;
+			return { active: wfxData.i18n.status_active, inactive: wfxData.i18n.status_inactive, not_installed: wfxData.i18n.status_missing }[s] || s;
 		},
 
 		buildTooltip: function (w) {
@@ -576,6 +586,6 @@
 		},
 	};
 
-	$(function () { WFE.init(); });
+	$(function () { WFX.init(); });
 
 })(jQuery);

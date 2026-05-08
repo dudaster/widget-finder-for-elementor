@@ -12,16 +12,17 @@
    1. WFE CATEGORY WRAPPER
    ═══════════════════════════════════════════════════════ */
 
-#wfe-panel-category {
+#wfx-panel-category {
 	/* Uses Elementor's own .elementor-panel-category styles automatically */
 }
 
-#wfe-results-section {
+#wfx-results-section {
 	margin-top: 15px;
+	isolation: isolate;
 }
 
 /* Category header title text — add WFE badge */
-#wfe-panel-category .elementor-panel-heading-title::after {
+#wfx-panel-category .elementor-panel-heading-title::after {
 	content: "WFE";
 	display: inline-block;
 	font-size: 9px;
@@ -39,8 +40,8 @@
 }
 
 /* Loading / empty states inside the items grid */
-.wfe-loading,
-.wfe-empty {
+.wfx-loading,
+.wfx-empty {
 	padding: 12px 16px;
 	font-size: 12px;
 	color: #959595;
@@ -53,11 +54,11 @@
    ═══════════════════════════════════════════════════════ */
 
 /*
- * Replicate the native Elementor widget card styles on .wfe-element.
+ * Replicate the native Elementor widget card styles on .wfx-element.
  * We cannot use .elementor-element because Elementor's JS auto-applies
  * jQuery UI draggable to all elements with that class.
  */
-button.wfe-element {
+button.wfx-element {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -77,24 +78,24 @@ button.wfe-element {
 	box-sizing: border-box;
 }
 
-button.wfe-element:hover {
+button.wfx-element:hover {
 	background: #f3f3f3;
 	border-color: #b0b0b0;
 }
 
-button.wfe-element:focus {
+button.wfx-element:focus {
 	outline: none;
 	border-color: #93003a;
 }
 
-button.wfe-element .icon {
+button.wfx-element .icon {
 	font-size: 28px;
 	color: #7a7a7a;
 	margin-bottom: 8px;
 	line-height: 1;
 }
 
-button.wfe-element .title-wrapper .title {
+button.wfx-element .title-wrapper .title {
 	font-size: 10px;
 	font-weight: 500;
 	color: #555d69;
@@ -107,17 +108,17 @@ button.wfe-element .title-wrapper .title {
    ═══════════════════════════════════════════════════════ */
 
 /*
- * The .wfe-widget-wrap is a thin positional wrapper around the native
+ * The .wfx-widget-wrap is a thin positional wrapper around the native
  * .elementor-element button. It adds the status dot without touching
  * Elementor's own button styles.
  */
-.wfe-widget-wrap {
+.wfx-widget-wrap {
 	position: relative;
 	display: flex; /* Let it participate in the grid the same as native */
 }
 
 /* The status dot — small circle in bottom-right corner of the card */
-.wfe-status-dot {
+.wfx-status-dot {
 	position: absolute;
 	bottom: 6px;
 	right: 6px;
@@ -131,17 +132,17 @@ button.wfe-element .title-wrapper .title {
 }
 
 /* Green — installed & active */
-.wfe-status-active .wfe-status-dot {
+.wfx-status-active .wfx-status-dot {
 	background-color: #2fc04d;
 }
 
 /* Red — installed but inactive */
-.wfe-status-inactive .wfe-status-dot {
+.wfx-status-inactive .wfx-status-dot {
 	background-color: #e43d3d;
 }
 
 /* Grey — not installed */
-.wfe-status-not_installed .wfe-status-dot {
+.wfx-status-not_installed .wfx-status-dot {
 	background-color: #adadad;
 }
 
@@ -149,7 +150,7 @@ button.wfe-element .title-wrapper .title {
    SHOW MORE BUTTON
    ═══════════════════════════════════════════════════════ */
 
-.wfe-show-more {
+.wfx-show-more {
 	display: block;
 	width: calc(100% - 16px);
 	margin: 8px 8px 4px;
@@ -165,12 +166,12 @@ button.wfe-element .title-wrapper .title {
 	transition: border-color 0.2s, color 0.2s;
 }
 
-.wfe-show-more:hover:not(:disabled) {
+.wfx-show-more:hover:not(:disabled) {
 	border-color: #93003a;
 	color: #93003a;
 }
 
-.wfe-show-more:disabled {
+.wfx-show-more:disabled {
 	opacity: 0.6;
 	cursor: default;
 }
@@ -179,7 +180,7 @@ button.wfe-element .title-wrapper .title {
    3. MODAL
    ═══════════════════════════════════════════════════════ */
 
-.wfe-modal-overlay {
+.wfx-modal-overlay {
 	position: absolute;
 	inset: 0;
 	background: rgba(0, 0, 0, 0.55);
@@ -189,7 +190,7 @@ button.wfe-element .title-wrapper .title {
 	z-index: 9999;
 }
 
-.wfe-modal {
+.wfx-modal {
 	background: #fff;
 	border-radius: 4px;
 	width: 260px;
@@ -200,7 +201,7 @@ button.wfe-element .title-wrapper .title {
 }
 
 /* Modal Header */
-.wfe-modal-header {
+.wfx-modal-header {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -209,19 +210,19 @@ button.wfe-element .title-wrapper .title {
 	background: #f8f8f8;
 }
 
-.wfe-modal-header .eicon {
+.wfx-modal-header .eicon {
 	font-size: 16px;
 	color: #93003a;
 }
 
-.wfe-modal-title {
+.wfx-modal-title {
 	flex: 1;
 	font-size: 13px;
 	font-weight: 600;
 	color: #2d2d2d;
 }
 
-.wfe-modal-close {
+.wfx-modal-close {
 	background: none;
 	border: none;
 	cursor: pointer;
@@ -233,27 +234,27 @@ button.wfe-element .title-wrapper .title {
 	align-items: center;
 }
 
-.wfe-modal-close:hover {
+.wfx-modal-close:hover {
 	color: #333;
 }
 
 /* Modal Body */
-.wfe-modal-body {
+.wfx-modal-body {
 	padding: 16px;
 	font-size: 12px;
 	line-height: 1.6;
 	color: #555;
 }
 
-.wfe-modal-body p {
+.wfx-modal-body p {
 	margin: 0;
 }
 
-.wfe-modal-body strong {
+.wfx-modal-body strong {
 	color: #2d2d2d;
 }
 
-.wfe-modal-progress {
+.wfx-modal-progress {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -261,18 +262,18 @@ button.wfe-element .title-wrapper .title {
 	font-size: 12px;
 }
 
-.wfe-modal-progress .eicon {
+.wfx-modal-progress .eicon {
 	font-size: 16px;
 	color: #93003a;
 }
 
-.wfe-modal-error {
+.wfx-modal-error {
 	color: #e43d3d;
 	margin: 0;
 }
 
 /* Modal Footer */
-.wfe-modal-footer {
+.wfx-modal-footer {
 	display: flex;
 	gap: 8px;
 	padding: 10px 16px 14px;
@@ -280,7 +281,7 @@ button.wfe-element .title-wrapper .title {
 	border-top: 1px solid #f0f0f0;
 }
 
-.wfe-modal-btn {
+.wfx-modal-btn {
 	font-size: 11px;
 	font-weight: 600;
 	padding: 6px 14px;
@@ -291,38 +292,38 @@ button.wfe-element .title-wrapper .title {
 	line-height: 1.4;
 }
 
-.wfe-modal-btn:disabled {
+.wfx-modal-btn:disabled {
 	opacity: 0.55;
 	cursor: not-allowed;
 }
 
-.wfe-modal-cancel {
+.wfx-modal-cancel {
 	background: #f0f0f0;
 	color: #555;
 	border-color: #ddd;
 }
 
-.wfe-modal-cancel:hover:not(:disabled) {
+.wfx-modal-cancel:hover:not(:disabled) {
 	background: #e4e4e4;
 }
 
-.wfe-modal-btn--activate {
+.wfx-modal-btn--activate {
 	background: #e43d3d;
 	color: #fff;
 	border-color: #c93232;
 }
 
-.wfe-modal-btn--activate:hover:not(:disabled) {
+.wfx-modal-btn--activate:hover:not(:disabled) {
 	background: #c93232;
 }
 
-.wfe-modal-btn--install {
+.wfx-modal-btn--install {
 	background: #93003a;
 	color: #fff;
 	border-color: #750030;
 }
 
-.wfe-modal-btn--install:hover:not(:disabled) {
+.wfx-modal-btn--install:hover:not(:disabled) {
 	background: #750030;
 }
 
@@ -330,7 +331,7 @@ button.wfe-element .title-wrapper .title {
    4. TOAST NOTICE
    ═══════════════════════════════════════════════════════ */
 
-#wfe-notice {
+#wfx-notice {
 	position: absolute;
 	bottom: 16px;
 	left: 50%;
@@ -350,7 +351,7 @@ button.wfe-element .title-wrapper .title {
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-#wfe-notice.wfe-notice--visible {
+#wfx-notice.wfx-notice--visible {
 	opacity: 1;
 	transform: translateX(-50%) translateY(0);
 }

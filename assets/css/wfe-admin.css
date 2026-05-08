@@ -6,13 +6,13 @@
    WRAP & HEADER
    ═══════════════════════════════════════════════════════ */
 
-.wfe-admin-wrap h1 {
+.wfx-admin-wrap h1 {
 	display: flex;
 	align-items: center;
 	gap: 8px;
 }
 
-.wfe-logo-icon {
+.wfx-logo-icon {
 	color: #93003a;
 	font-size: 22px !important;
 	width: 22px !important;
@@ -23,20 +23,20 @@
    EMPTY STATE
    ═══════════════════════════════════════════════════════ */
 
-.wfe-empty-state {
+.wfx-empty-state {
 	margin-top: 32px;
 	text-align: center;
 	color: #777;
 }
 
-.wfe-empty-state .dashicons {
+.wfx-empty-state .dashicons {
 	font-size: 40px;
 	width: 40px;
 	height: 40px;
 	color: #c0c0c0;
 }
 
-.wfe-empty-state p {
+.wfx-empty-state p {
 	margin: 4px 0;
 	font-size: 14px;
 }
@@ -45,7 +45,7 @@
    BULK ACTIONS BAR
    ═══════════════════════════════════════════════════════ */
 
-.wfe-table-actions {
+.wfx-table-actions {
 	display: flex;
 	align-items: center;
 	gap: 6px;
@@ -56,36 +56,36 @@
    PLUGIN TABLE
    ═══════════════════════════════════════════════════════ */
 
-.wfe-plugins-table {
+.wfx-plugins-table {
 	margin-top: 0;
 }
 
-.wfe-plugins-table .check-column {
+.wfx-plugins-table .check-column {
 	padding: 8px 10px !important;
 }
 
-.wfe-plugins-table .column-name {
+.wfx-plugins-table .column-name {
 	width: 30%;
 }
 
-.wfe-plugins-table .column-status {
+.wfx-plugins-table .column-status {
 	width: 110px;
 }
 
-.wfe-plugins-table .column-installed {
+.wfx-plugins-table .column-installed {
 	width: 120px;
 }
 
-.wfe-plugins-table .column-usage {
+.wfx-plugins-table .column-usage {
 	width: 110px;
 	text-align: center;
 }
 
-.wfe-plugins-table .column-actions {
+.wfx-plugins-table .column-actions {
 	width: 180px;
 }
 
-.wfe-slug {
+.wfx-slug {
 	font-size: 11px;
 	color: #888;
 	margin-top: 2px;
@@ -97,7 +97,7 @@
    STATUS BADGES
    ═══════════════════════════════════════════════════════ */
 
-.wfe-badge {
+.wfx-badge {
 	display: inline-block;
 	font-size: 10px;
 	font-weight: 600;
@@ -108,22 +108,22 @@
 	text-transform: uppercase;
 }
 
-.wfe-badge-active {
+.wfx-badge-active {
 	background: #e6f4ea;
 	color: #1a7a38;
 }
 
-.wfe-badge-inactive {
+.wfx-badge-inactive {
 	background: #fef3e2;
 	color: #92640d;
 }
 
-.wfe-badge-missing {
+.wfx-badge-missing {
 	background: #f0f0f0;
 	color: #666;
 }
 
-.wfe-badge-warn {
+.wfx-badge-warn {
 	background: #fef3e2;
 	color: #92640d;
 	margin-left: 6px;
@@ -133,24 +133,24 @@
    ACTION BUTTONS
    ═══════════════════════════════════════════════════════ */
 
-.wfe-btn-deactivate,
-.wfe-btn-uninstall {
+.wfx-btn-deactivate,
+.wfx-btn-uninstall {
 	margin-right: 4px !important;
 }
 
-.wfe-btn-uninstall.button-link-delete {
+.wfx-btn-uninstall.button-link-delete {
 	border-color: transparent;
 	color: #b32d2e;
 }
 
-.wfe-btn-uninstall.button-link-delete:hover {
+.wfx-btn-uninstall.button-link-delete:hover {
 	background: #fcebeb;
 	border-color: #b32d2e;
 	color: #b32d2e;
 }
 
 /* In-row spinner / status text */
-.wfe-row-status {
+.wfx-row-status {
 	font-size: 12px;
 	color: #777;
 	font-style: italic;
@@ -160,13 +160,13 @@
    SETTINGS TABLE
    ═══════════════════════════════════════════════════════ */
 
-.wfe-settings-table th {
+.wfx-settings-table th {
 	width: 220px;
 	vertical-align: top;
 	padding-top: 14px;
 }
 
-.wfe-settings-table fieldset label {
+.wfx-settings-table fieldset label {
 	display: block;
 	margin-bottom: 4px;
 }
