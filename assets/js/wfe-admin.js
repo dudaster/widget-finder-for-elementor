@@ -5,9 +5,9 @@
 ( function () {
 	'use strict';
 
-	if ( typeof wfeAdmin === 'undefined' ) return;
+	if ( typeof wfxAdmin === 'undefined' ) return;
 
-	const cfg  = wfeAdmin;
+	const cfg  = wfxAdmin;
 	const i18n = cfg.i18n;
 
 	// ── helpers ───────────────────────────────────────────────────────────────
@@ -30,7 +30,7 @@
 	function setRowStatus( row, text ) {
 		var actionsCell = row.querySelector( '.column-actions' );
 		if ( actionsCell ) {
-			actionsCell.innerHTML = '<span class="wfe-row-status">' + text + '</span>';
+			actionsCell.innerHTML = '<span class="wfx-row-status">' + text + '</span>';
 		}
 	}
 
@@ -123,7 +123,7 @@
 	// ── bulk actions ──────────────────────────────────────────────────────────
 
 	function doBulk() {
-		var action    = document.getElementById( 'wfe-bulk-select' ).value;
+		var action    = document.getElementById( 'wfx-bulk-select' ).value;
 		var checked   = document.querySelectorAll( 'input[name="plugins[]"]:checked' );
 		var slugs     = Array.from( checked ).map( function ( cb ) { return cb.value; } );
 
@@ -171,7 +171,7 @@
 	// ── select all ────────────────────────────────────────────────────────────
 
 	function bindSelectAll() {
-		var selectAll = document.getElementById( 'wfe-select-all' );
+		var selectAll = document.getElementById( 'wfx-select-all' );
 		if ( ! selectAll ) return;
 		selectAll.addEventListener( 'change', function () {
 			document.querySelectorAll( 'input[name="plugins[]"]' ).forEach( function ( cb ) {
@@ -194,7 +194,7 @@
 		} );
 
 		// Bulk apply
-		var bulkBtn = document.getElementById( 'wfe-bulk-apply' );
+		var bulkBtn = document.getElementById( 'wfx-bulk-apply' );
 		if ( bulkBtn ) bulkBtn.addEventListener( 'click', doBulk );
 
 		bindSelectAll();

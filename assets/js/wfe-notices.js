@@ -82,25 +82,25 @@
 		if ( uiReady ) return;
 		uiReady = true;
 
-		const i18n = ( typeof wfeNotices !== 'undefined' ) ? wfeNotices.i18n : {
+		const i18n = ( typeof wfxNotices !== 'undefined' ) ? wfxNotices.i18n : {
 			title: 'Notifications',
 			close: 'Close',
 		};
 
 		// Wrapper
 		wrapEl    = document.createElement( 'div' );
-		wrapEl.id = 'wfe-notif-wrap';
+		wrapEl.id = 'wfx-notif-wrap';
 
 		// Bell button
 		btnEl           = document.createElement( 'button' );
 		btnEl.type      = 'button';
-		btnEl.id        = 'wfe-notif-btn';
+		btnEl.id        = 'wfx-notif-btn';
 		btnEl.className = 'button';
 		btnEl.title     = i18n.title;
 		btnEl.setAttribute( 'aria-expanded', 'false' );
 
 		badgeEl           = document.createElement( 'span' );
-		badgeEl.className = 'wfe-notif-badge';
+		badgeEl.className = 'wfx-notif-badge';
 		badgeEl.textContent = '0';
 		badgeEl.hidden = true; // shown later once count is known
 
@@ -111,21 +111,21 @@
 
 		// Popup
 		popupEl    = document.createElement( 'div' );
-		popupEl.id = 'wfe-notif-popup';
+		popupEl.id = 'wfx-notif-popup';
 		popupEl.hidden = true;
 		popupEl.setAttribute( 'role', 'dialog' );
 		popupEl.setAttribute( 'aria-label', i18n.title );
 
 		const header      = document.createElement( 'div' );
-		header.className  = 'wfe-notif-header';
+		header.className  = 'wfx-notif-header';
 
 		titleEl           = document.createElement( 'span' );
-		titleEl.className = 'wfe-notif-title';
+		titleEl.className = 'wfx-notif-title';
 		updateTitle( i18n.title, 0 );
 
 		const closeBtn      = document.createElement( 'button' );
 		closeBtn.type       = 'button';
-		closeBtn.className  = 'wfe-notif-close';
+		closeBtn.className  = 'wfx-notif-close';
 		closeBtn.title      = i18n.close;
 		closeBtn.innerHTML  = '&#x2715;';
 
@@ -133,7 +133,7 @@
 		header.appendChild( closeBtn );
 
 		listEl           = document.createElement( 'div' );
-		listEl.className = 'wfe-notif-list';
+		listEl.className = 'wfx-notif-list';
 
 		popupEl.appendChild( header );
 		popupEl.appendChild( listEl );
@@ -148,7 +148,7 @@
 		} else {
 			// Fallback for custom plugin pages that have no Screen Options / Help.
 			// Use fixed positioning so it aligns with where the toolbar ends.
-			wrapEl.classList.add( 'wfe-notif-fallback' );
+			wrapEl.classList.add( 'wfx-notif-fallback' );
 			document.body.appendChild( wrapEl );
 		}
 
@@ -225,10 +225,10 @@
 	}
 
 	function addNotice( html ) {
-		const i18n = ( typeof wfeNotices !== 'undefined' ) ? wfeNotices.i18n : { title: 'Notifications', close: 'Close' };
+		const i18n = ( typeof wfxNotices !== 'undefined' ) ? wfxNotices.i18n : { title: 'Notifications', close: 'Close' };
 
 		const item      = document.createElement( 'div' );
-		item.className  = 'wfe-notif-item';
+		item.className  = 'wfx-notif-item';
 		item.innerHTML  = html;
 
 		// Strip is-dismissible so WP's own handler doesn't error on missing DOM node.
@@ -240,7 +240,7 @@
 
 		const dismissBtn      = document.createElement( 'button' );
 		dismissBtn.type       = 'button';
-		dismissBtn.className  = 'wfe-notif-dismiss notice-dismiss';
+		dismissBtn.className  = 'wfx-notif-dismiss notice-dismiss';
 		dismissBtn.title      = i18n.close;
 		item.appendChild( dismissBtn );
 

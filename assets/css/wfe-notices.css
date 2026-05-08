@@ -6,7 +6,7 @@
 /* Covers notices at any nesting depth inside #wpbody-content.                  */
 /* The popup lives inside #screen-meta-links, NOT #wpbody-content, so notices   */
 /* inside the popup are never matched by these rules.                            */
-/* Once JS moves a notice into .wfe-notif-item the selector no longer matches.  */
+/* Once JS moves a notice into .wfx-notif-item the selector no longer matches.  */
 
 #wpbody-content .notice,
 #wpbody-content .updated,
@@ -16,7 +16,7 @@
 
 /* ── Wrapper ────────────────────────────────────────────────────────────── */
 
-#wfe-notif-wrap {
+#wfx-notif-wrap {
 	position: relative;
 	float: left;
 	margin: 0 4px;
@@ -24,7 +24,7 @@
 
 /* Fallback: pages without #screen-meta-links (custom plugin pages).
    Positioned just below the WP admin bar (32px tall) on the right side. */
-#wfe-notif-wrap.wfe-notif-fallback {
+#wfx-notif-wrap.wfx-notif-fallback {
 	position: fixed;
 	top: 36px;
 	right: 16px;
@@ -35,7 +35,7 @@
 
 /* ── Bell button ────────────────────────────────────────────────────────── */
 
-#wfe-notif-btn {
+#wfx-notif-btn {
 	position: relative;
 	display: inline-flex;
 	align-items: center;
@@ -53,8 +53,8 @@
 	transition: background 0.12s, color 0.12s;
 }
 
-#wfe-notif-btn:hover,
-#wfe-notif-btn:focus {
+#wfx-notif-btn:hover,
+#wfx-notif-btn:focus {
 	background: #fff;
 	color: #135e96;
 	border-color: #0a4b78;
@@ -62,14 +62,14 @@
 	box-shadow: 0 0 0 1px #0a4b78;
 }
 
-#wfe-notif-btn svg {
+#wfx-notif-btn svg {
 	display: block;
 	flex-shrink: 0;
 }
 
 /* ── Unread badge (red dot with count) ─────────────────────────────────── */
 
-.wfe-notif-badge {
+.wfx-notif-badge {
 	position: absolute;
 	top: -6px;
 	right: -6px;
@@ -89,7 +89,7 @@
 
 /* ── Popup ──────────────────────────────────────────────────────────────── */
 
-#wfe-notif-popup {
+#wfx-notif-popup {
 	position: absolute;
 	top: calc(100% + 6px);
 	right: 0;
@@ -105,7 +105,7 @@
 
 /* ── Popup header ───────────────────────────────────────────────────────── */
 
-.wfe-notif-header {
+.wfx-notif-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -114,13 +114,13 @@
 	border-bottom: 1px solid #e0e0e0;
 }
 
-.wfe-notif-title {
+.wfx-notif-title {
 	font-size: 13px;
 	font-weight: 600;
 	color: #1d2327;
 }
 
-.wfe-notif-close {
+.wfx-notif-close {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -136,14 +136,14 @@
 	transition: background 0.1s, color 0.1s;
 }
 
-.wfe-notif-close:hover {
+.wfx-notif-close:hover {
 	background: #e0e0e0;
 	color: #1d2327;
 }
 
 /* ── Notices list ───────────────────────────────────────────────────────── */
 
-.wfe-notif-list {
+.wfx-notif-list {
 	max-height: 420px;
 	overflow-y: auto;
 	padding: 8px 0;
@@ -151,20 +151,20 @@
 
 /* ── Individual notice item ─────────────────────────────────────────────── */
 
-.wfe-notif-item {
+.wfx-notif-item {
 	position: relative;
 	padding: 0 36px 0 0;
 	border-bottom: 1px solid #f0f0f0;
 }
 
-.wfe-notif-item:last-child {
+.wfx-notif-item:last-child {
 	border-bottom: none;
 }
 
 /* Reset WordPress notice styles inside popup */
-.wfe-notif-item .notice,
-.wfe-notif-item .updated,
-.wfe-notif-item .error {
+.wfx-notif-item .notice,
+.wfx-notif-item .updated,
+.wfx-notif-item .error {
 	margin: 0 !important;
 	border-left-width: 4px;
 	box-shadow: none !important;
@@ -172,7 +172,7 @@
 
 /* ── Per-item dismiss button ────────────────────────────────────────────── */
 
-.wfe-notif-item .wfe-notif-dismiss {
+.wfx-notif-item .wfx-notif-dismiss {
 	position: absolute;
 	top: 50%;
 	right: 8px;
@@ -192,14 +192,14 @@
 	transition: background 0.1s, color 0.1s;
 }
 
-.wfe-notif-item .wfe-notif-dismiss::before {
+.wfx-notif-item .wfx-notif-dismiss::before {
 	content: "\f153";
 	font-family: dashicons;
 	font-size: 16px;
 	line-height: 1;
 }
 
-.wfe-notif-item .wfe-notif-dismiss:hover {
+.wfx-notif-item .wfx-notif-dismiss:hover {
 	background: #f0f0f0;
 	color: #d63638;
 }
@@ -207,7 +207,7 @@
 /* ── Responsive: on very narrow screens use full width ──────────────────── */
 
 @media (max-width: 540px) {
-	#wfe-notif-popup {
+	#wfx-notif-popup {
 		right: auto;
 		left: 0;
 		width: 94vw;

@@ -1,0 +1,75 @@
+/**
+ * WFE Plugin Settings — sidebar menu collapse styles
+ */
+
+/* ── Hide grouped items when collapsed ──────────────────────────────────── */
+
+#adminmenu .wfx-grouped-plugin.wfx-grouped-hidden {
+	display: none !important;
+}
+
+/* ── "Plugin Settings" toggle item ──────────────────────────────────────── */
+
+#adminmenu .wfx-plugin-settings-toggle {
+	position: relative; /* anchor for the absolute arrow */
+	border-top: 1px solid rgba( 255, 255, 255, 0.1 );
+	margin-top: 3px;
+}
+
+/* ── Collapse arrow (absolute inside the <li>, never touches link layout) ── */
+
+.wfx-collapse-arrow {
+	position: absolute;
+	top: 50%;
+	right: 10px;
+	transform: translateY( -50% );
+	pointer-events: none;
+	opacity: 0.55;
+	line-height: 1;
+}
+
+.wfx-collapse-arrow::before {
+	content: "\f140";
+	font-family: dashicons;
+	font-size: 16px;
+	display: block;
+	transition: transform 0.15s ease;
+}
+
+.wfx-plugin-settings-toggle.wfx-group-collapsed .wfx-collapse-arrow::before {
+	transform: rotate( -90deg );
+}
+
+/* ── Grouped items: look like WP submenu entries ─────────────────────────── */
+
+/* Hide the dashicon / SVG icon area */
+#adminmenu .wfx-grouped-plugin .wp-menu-image {
+	display: none !important;
+}
+
+/*
+ * The wp-menu-name div normally has ~36 px of left padding to clear the icon.
+ * With the icon gone we reset it to a compact submenu-style indent.
+ * We also reduce vertical padding so items match WP submenu height (~30 px).
+ */
+#adminmenu .wfx-grouped-plugin > a.menu-top {
+	padding: 0 !important;
+}
+
+#adminmenu .wfx-grouped-plugin > a.menu-top .wp-menu-name {
+	padding: 7px 8px 7px 14px !important;
+	font-size: 13px !important;
+	line-height: 1.4 !important;
+	font-weight: 400;
+}
+
+/* Left accent line — the only grouping visual cue */
+#adminmenu .wfx-grouped-plugin {
+	border-left: 3px solid rgba( 255, 255, 255, 0.18 );
+}
+
+#adminmenu .wfx-grouped-plugin.current,
+#adminmenu .wfx-grouped-plugin.wp-has-current-submenu,
+#adminmenu .wfx-grouped-plugin.wp-menu-open {
+	border-left-color: #72aee6;
+}
