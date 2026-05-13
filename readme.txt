@@ -1,5 +1,6 @@
 === Widget Finder for Elementor ===
 Contributors: dudaster
+Author: dudaster
 Tags: elementor, widgets, search, plugin manager, widget finder
 Requires at least: 6.0
 Tested up to: 6.9

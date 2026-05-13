@@ -6,7 +6,7 @@
  * Version:           1.7.0
  * Requires at least: 6.0
  * Requires PHP:      8.0
- * Author:            Liviu Dudas
+ * Author:            dudaster
  * Author URI:        https://dudaster.com
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
