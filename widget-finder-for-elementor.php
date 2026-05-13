@@ -3,7 +3,7 @@
  * Plugin Name:       Widget Finder for Elementor
  * Plugin URI:        https://github.com/dudaster/widget-finder-for-elementor
  * Description:       Extends Elementor's widget search to surface widgets from installed, inactive, and not-yet-installed plugins. Includes Plugin Manager, Notification Center, and Menu Consolidation.
- * Version:           1.6.9
+ * Version:           1.7.0
  * Requires at least: 6.0
  * Requires PHP:      8.0
  * Author:            Liviu Dudas
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WFX_VERSION', '1.6.9' );
+define( 'WFX_VERSION', '1.7.0' );
 
 // ── Auto-update from GitHub ────────────────────────────────────────────────────
 require_once plugin_dir_path( __FILE__ ) . 'lib/plugin-update-checker/plugin-update-checker.php';

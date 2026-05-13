@@ -4,7 +4,7 @@ Tags: elementor, widgets, search, plugin manager, widget finder
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.6.9
+Stable tag: 1.7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -55,6 +55,10 @@ Yes. Go to **Widget Finder → Settings** and uncheck the **Notification center*
 3. Settings page.
 
 == Changelog ==
+
+= 1.7.0 =
+* Plugin renamed to "Widget Finder for Elementor".
+* Added: automatic updates via GitHub releases (Plugin Update Checker).
 
 = 1.6.9 =
 * Fixed: text domain updated to `widget-finder-for-elementor` throughout.
