@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       Widget Finder for Elementor Extended
+ * Plugin Name:       Widget Finder for Elementor
  * Plugin URI:        https://github.com/dudaster/widget-finder-for-elementor
  * Description:       Extends Elementor's widget search to surface widgets from installed, inactive, and not-yet-installed plugins. Includes Plugin Manager, Notification Center, and Menu Consolidation.
  * Version:           1.6.9
